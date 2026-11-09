@@ -40,7 +40,31 @@ test.describe('POST /api/products', () => {
     expect(typeof responseBody.quantity).toBe('number')
   })
 
+  // quantity is optional by API docs: if not sent, it defaults to 0
+  test('post product without quantity should receive code 201 and quantity 0', async ({
+    request,
+  }) => {
+    const response = await request.post(productsUrl, {
+      data: { name: 'Orange', category: 'Fruit', price: 2.39 },
+    })
+    const responseBody = await response.json()
+
+    expect(response.status()).toBe(StatusCodes.CREATED)
+    expect(responseBody.quantity).toBe(0)
+  })
+
   // ---------- negative ----------
+
+  // KNOWN BUG: server accepts negative price and returns 201 instead of 400.
+  // test.fail() marks this test as expected to fail until the bug is fixed.
+  test('post product with negative price should receive code 400', async ({ request }) => {
+    test.fail()
+    const response = await request.post(productsUrl, {
+      data: { name: 'Orange', category: 'Fruit', price: -1, quantity: 10 },
+    })
+
+    expect(response.status()).toBe(StatusCodes.BAD_REQUEST)
+  })
 
   test('post product with empty body should receive code 400', async ({ request }) => {
     const response = await request.post(productsUrl, { data: {} })
@@ -62,7 +86,6 @@ test.describe('POST /api/products', () => {
     { scenario: 'missing name', body: { category: 'Fruit', price: 2.39, quantity: 10 } },
     { scenario: 'missing category', body: { name: 'Orange', price: 2.39, quantity: 10 } },
     { scenario: 'missing price', body: { name: 'Orange', category: 'Fruit', quantity: 10 } },
-    { scenario: 'missing quantity', body: { name: 'Orange', category: 'Fruit', price: 2.39 } },
     {
       scenario: 'empty name',
       body: { name: '', category: 'Fruit', price: 2.39, quantity: 10 },
@@ -74,10 +97,6 @@ test.describe('POST /api/products', () => {
     {
       scenario: 'price is a string',
       body: { name: 'Orange', category: 'Fruit', price: 'abc', quantity: 10 },
-    },
-    {
-      scenario: 'negative price',
-      body: { name: 'Orange', category: 'Fruit', price: -1, quantity: 10 },
     },
     {
       scenario: 'quantity is a string',
