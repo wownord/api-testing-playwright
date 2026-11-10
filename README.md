@@ -34,6 +34,7 @@ Create a `.env` file in the project root by copying the example below:
 ```dotenv
 DL_USERNAME=your_username
 DL_PASSWORD=your_password
+API_KEY=your_bank_accounts_api_key
 ```
 
 > ⚠️ **Important:** The `.env` file must **not** be committed to the repository. Make sure `.env` is listed in your `.gitignore`.
@@ -83,6 +84,7 @@ The workflow file is already provided at `.github/workflows/playwright.yml`.
 2. Click **New repository secret** and add each variable:
    - `DL_USERNAME`
    - `DL_PASSWORD`
+   - `API_KEY` (X-API-KEY for the Bank Accounts API)
 3. The workflow will automatically pick them up:
 
 ```yaml
