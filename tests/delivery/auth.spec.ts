@@ -53,9 +53,9 @@ test.describe('Authorization flow', () => {
   test('created order should have an id', async ({ request }) => {
     const jwt = await fetchJwt(request, LoginDto.createLoginWithCorrectData())
 
-    const orderId = await createOrder(request, jwt)
+    const order = await createOrder(request, jwt)
 
-    expect(orderId).toBeDefined()
+    expect(order.id).toBeDefined()
   })
 
   test('get orders with authorization token should receive code 200', async ({ request }) => {
