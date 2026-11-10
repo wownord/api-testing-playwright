@@ -1,10 +1,11 @@
-import { APIRequestContext } from 'playwright-core'
-import { Login } from '../dto/login-dto'
-import { baseUrl, loginEndpoint, ordersEndpoint } from '../tests/delivery/auth.spec'
+import { APIRequestContext, expect } from '@playwright/test'
 import { StatusCodes } from 'http-status-codes'
-import { expect } from '@playwright/test'
+import { LoginDto } from '../dto/login-dto'
+import { OrderDto } from '../dto/order-dto'
+import { baseUrl, loginEndpoint, ordersEndpoint } from '../tests/delivery/delivery-config'
 
-export async function fetchJwt(request: APIRequestContext, login: Login): Promise<string> {
+// send POST /login/student and return JWT from the response body
+export async function fetchJwt(request: APIRequestContext, login: LoginDto): Promise<string> {
   const authResponse = await request.post(baseUrl + loginEndpoint, {
     data: login,
   })
@@ -14,16 +15,10 @@ export async function fetchJwt(request: APIRequestContext, login: Login): Promis
   return await authResponse.text()
 }
 
+// create order with Bearer token and return its id
 export async function createOrder(request: APIRequestContext, jwt: string): Promise<number> {
   const response = await request.post(baseUrl + ordersEndpoint, {
-    data: {
-      "status": "OPEN",
-      "courierId": 0,
-      "customerName": "vladimir",
-      "customerPhone": "55445566",
-      "comment": "hello",
-      "id": 0
-    },
+    data: OrderDto.createOrderWithoutId(),
     headers: {
       Authorization: `Bearer ${jwt}`,
     },
@@ -32,4 +27,3 @@ export async function createOrder(request: APIRequestContext, jwt: string): Prom
   const responseBody = await response.json()
   return responseBody.id
 }
-
