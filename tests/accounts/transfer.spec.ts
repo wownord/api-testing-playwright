@@ -69,7 +69,9 @@ test.describe('POST /api/accounts/{id}/transfer', () => {
     expect(response.status()).toBe(StatusCodes.CONFLICT)
   })
 
+  // BUG: API returns 200 instead of 400 for a transfer to the same account
   test('transfer to the same account should receive code 400', async ({ request }) => {
+    test.fail()
     const response = await request.post(`${accountsUrl}/${fromId}/transfer`, {
       headers: HEADERS,
       data: new TransferDto(fromId, 10),
@@ -78,7 +80,9 @@ test.describe('POST /api/accounts/{id}/transfer', () => {
     expect(response.status()).toBe(StatusCodes.BAD_REQUEST)
   })
 
+  // BUG: API returns 200 instead of 400 for a transfer between EUR and USD accounts
   test('transfer between different currencies should receive code 400', async ({ request }) => {
+    test.fail()
     const usdAccountId = await createAccountWithBalance(request, 0.01, 'USD')
 
     const response = await request.post(`${accountsUrl}/${fromId}/transfer`, {

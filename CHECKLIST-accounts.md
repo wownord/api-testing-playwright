@@ -33,3 +33,12 @@ All requests use the `X-API-KEY` header (`API_KEY` env variable). Only status co
 | 27  | POST /api/accounts/{id}/transfer | Invalid sender id: `abc`, `0`, `-1`, `1.5`                | 400      |
 
 Not automated: 409 "account limit (500) reached" — would require creating hundreds of accounts in the shared DB.
+
+## Found bugs
+
+Tests for these cases are marked with `test.fail()` until the bugs are fixed.
+
+| #   | Request                                                          | Expected | Actual |
+| --- | ---------------------------------------------------------------- | -------- | ------ |
+| 1   | POST /api/accounts/{id}/transfer with `toId` equal to `{id}`     | 400      | 200    |
+| 2   | POST /api/accounts/{id}/transfer from EUR account to USD account | 400      | 200    |
